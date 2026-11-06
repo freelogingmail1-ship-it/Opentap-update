@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#ff2e7e">
+<title>OpenTap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{--fnt:"Plus Jakarta Sans","Noto Sans Bengali",-apple-system,"Segoe UI",Roboto,sans-serif;--bg:#f5f6fa;--card:#fff;--tx:#14151a;--mu:#7b7f8c;--bd:#ececf2;--sh:0 8px 28px rgba(30,30,80,.07);--ac:linear-gradient(135deg,#ff8a3d,#ff2e7e 50%,#7b3fe4)}
+[data-theme=dark]{--bg:#09090c;--card:#14141a;--tx:#f3f3f6;--mu:#8b8e9b;--bd:#23232b;--sh:0 8px 28px rgba(0,0,0,.45)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font:15px/1.5 "Plus Jakarta Sans","Noto Sans Bengali",-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);padding-top:env(safe-area-inset-top)}
+#app{max-width:520px;margin:auto;min-height:100vh;padding-bottom:110px}
+svg{display:block;flex:none}
+.top{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 12px;position:sticky;top:0;z-index:5;transition:transform .3s ease;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--ac);opacity:.5}
+.top.hide{transform:translateY(-115%)}
+.top h1{font-size:22px;font-weight:800;letter-spacing:-.4px}
+.top .r{display:flex;gap:8px}
+.brand{font-family:var(--fnt);font-weight:800;font-size:24px;letter-spacing:-.8px}
+.brand b{background:var(--ac);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo{font-weight:800;letter-spacing:-.5px;background:var(--ac);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ib{background:var(--card);color:var(--tx);border:1px solid var(--bd);width:40px;height:40px;border-radius:14px;padding:0;display:grid;place-items:center}
+button{font:inherit;border:0;border-radius:14px;padding:11px 18px;background:var(--ac);color:#fff;font-weight:700;cursor:pointer}
+button.g{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+button.p{background:none;color:var(--tx);padding:6px;border-radius:10px;display:flex;align-items:center;gap:6px}
+button.dg{background:#e0245e}
+input,textarea{font:inherit;width:100%;padding:13px 15px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);margin:6px 0;outline:none}
+input:focus,textarea:focus{border-color:#ff2e7e}
+.mu{color:var(--mu);font-size:12.5px}
+.av{width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--bd)}
+.av.sm{width:32px;height:32px}
+.av.big{width:104px;height:104px}
+.ring{display:block;border-radius:50%}
+.nm{font-family:var(--fnt);font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:0}
+a.lk{color:#1d9bf0;text-decoration:none;word-break:break-all}.me a.lk{color:#fff;text-decoration:underline}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}30%{transform:translate(-50%,-50%) scale(1.2);opacity:1}100%{transform:translate(-50%,-90%) scale(1);opacity:0}}
+.post{position:relative;background:var(--card);margin:0 12px 22px;border-radius:30px;overflow:hidden;box-shadow:0 14px 38px rgba(30,30,80,.12);animation:up .5s ease both}
+[data-theme=dark] .post{box-shadow:0 14px 38px rgba(0,0,0,.55);border:1px solid var(--bd)}
+.ph{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;gap:6px;padding:13px 8px 34px 13px;background:linear-gradient(rgba(0,0,0,.6),transparent)}
+.ph .nm,.ph .mu{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.5)}.ph .mu{opacity:.88;font-size:12px}
+.ph .av{width:42px;height:42px;border:2px solid rgba(255,255,255,.95)}
+.ph button.p{color:#fff}
+.mw{position:relative;background:#000;overflow:hidden;min-height:280px;display:grid}
+.mw.im::before{content:"";position:absolute;inset:-30px;background:var(--bgi) center/cover;filter:blur(28px) brightness(.62) saturate(1.3)}
+.media{position:relative;width:100%;max-height:74vh;object-fit:contain;display:block;margin:auto}
+.tp{min-height:320px;padding:96px 26px 36px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-family:var(--fnt);font-weight:800;line-height:1.35;letter-spacing:-.4px;word-break:break-word;white-space:pre-wrap}
+.tp a.lk{color:#fff;text-decoration:underline}
+.act{display:flex;align-items:center;gap:8px;padding:13px 14px 2px}
+button.pill{display:flex;align-items:center;gap:7px;background:var(--bg);color:var(--tx);border-radius:22px;padding:9px 15px;font-weight:700}
+button.pill small{font-size:13px;font-weight:800}
+button.pill.on{background:color-mix(in srgb,#ff2e7e 14%,var(--card));color:#ff2e7e}
+.act .mu{margin-left:auto;font-size:15px;letter-spacing:2px}
+.cap{padding:8px 18px 18px;white-space:pre-wrap;word-break:break-word;line-height:1.45}
+.cap b{font-family:var(--fnt);font-weight:800}
+.burst{position:absolute;left:50%;top:50%;z-index:4;pointer-events:none;color:#fff;animation:pop .85s ease forwards;filter:drop-shadow(0 4px 16px rgba(0,0,0,.45))}
+.empty{text-align:center;padding:60px 30px;color:var(--mu)}.empty b{display:block;color:var(--tx);font-size:18px;margin:12px 0 4px}
+nav{position:fixed;bottom:calc(12px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(480px,calc(100% - 24px));display:flex;justify-content:space-around;align-items:center;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--bd);border-radius:28px;padding:8px 6px;box-shadow:var(--sh);z-index:9}
+.dot{position:absolute;top:4px;right:6px;background:#ff2e7e;color:#fff;border-radius:9px;font-size:10px;padding:1px 6px;min-width:17px;text-align:center}
+.pad{padding:6px 16px}
+.auth{padding:70px 26px;text-align:center;background:radial-gradient(circle at 20% 0,#ff8a3d33,transparent 45%),radial-gradient(circle at 90% 10%,#7b3fe433,transparent 40%);min-height:100vh}
+.pcard{position:relative;overflow:hidden;background:var(--card);margin:6px 12px 16px;border-radius:28px;border:1px solid var(--bd);padding:30px 20px 20px;text-align:center}
+.pcard>*{position:relative}
+.stats{display:flex;gap:10px;margin:16px 0}.stats>div{flex:1;background:var(--bg);border-radius:16px;padding:11px}.stats b{font-size:18px;display:block;font-weight:800}
+.sec{display:flex;align-items:center;gap:8px;padding:4px 18px 10px;font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:0 12px}.grid>div{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--bd)}.grid img,.grid video{width:100%;height:100%;object-fit:cover}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border-radius:20px;margin:0 12px 10px;border:1px solid var(--bd);cursor:pointer}
+.bub{white-space:pre-wrap;max-width:78%;padding:9px 14px;border-radius:20px;margin:4px 0;word-break:break-word;width:fit-content}
+.me{background:var(--ac);color:#fff;margin-left:auto;border-bottom-right-radius:6px}.th{background:var(--card);border:1px solid var(--bd);border-bottom-left-radius:6px}
+.bub img,.bub video{max-width:100%;border-radius:12px;display:block}.bub audio{max-width:230px}
+.dlb{background:rgba(0,0,0,.2);color:inherit;padding:4px 10px;border-radius:12px;font-size:12px;display:inline-flex;align-items:center;gap:5px;margin-top:6px}
+.sheet{position:fixed;inset:0;background:#0009;z-index:30;display:flex;align-items:flex-end;backdrop-filter:blur(3px)}
+.sheet>div{background:var(--card);width:100%;max-width:520px;margin:auto;max-height:80vh;overflow:auto;border-radius:26px 26px 0 0;padding:18px;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+.sheet>div.cmt{height:72vh;overflow:hidden;display:flex;flex-direction:column}.cmt .cl{flex:1;overflow-y:auto;min-height:0;margin:10px 0}
+.ta{min-height:44px;resize:none;max-height:120px;margin:0;border-radius:22px;line-height:1.35;overflow-y:auto;padding:11px 16px;display:block}
+.cin{display:flex;gap:8px;align-items:flex-end;padding-top:10px}.cin .ta{flex:1}
+.rb{display:none;padding:6px 4px 0;font-size:13px;color:var(--mu)}.rb b{color:var(--tx)}
+.sd{width:44px;height:44px;border-radius:50%;background:var(--ac);color:#fff;border:0;padding:0;display:grid;place-items:center;flex:none}
+.cb{width:44px;height:44px;padding:0;display:grid;place-items:center;background:none;color:var(--mu);border-radius:50%;flex:none}
+#toast{position:fixed;top:calc(12px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:var(--card);box-shadow:0 8px 30px #0005;padding:12px 18px;border-radius:16px;z-index:60;display:none;max-width:90%;font-weight:600}
+.od{width:9px;height:9px;border-radius:50%;background:#2ecc71;display:inline-block;margin-right:5px}.od.off{background:#9a9aa5}
+.sw{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;gap:12px}.sw+.sw{border-top:1px solid var(--bd)}
+.grp{background:var(--card);border-radius:22px;border:1px solid var(--bd);margin:0 12px 14px}
+.tg{width:50px;height:30px;border-radius:15px;background:var(--bd);position:relative;padding:0;flex:none}.tg::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px #0004}
+.tg.on{background:var(--ac)}.tg.on::after{left:23px}
+@keyframes rxin{from{opacity:0;transform:translateY(8px) scale(.9)}to{opacity:1;transform:none}}
+.rx{position:fixed;left:0;top:0;background:var(--card);border-radius:30px;box-shadow:0 10px 40px #0006;padding:6px 10px;display:flex;gap:2px;z-index:40;animation:rxin .18s ease both}.rx button{background:none;font-size:28px;padding:4px 7px}
+.chatbar{position:sticky;bottom:0;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);padding:10px 12px calc(10px + env(safe-area-inset-bottom));z-index:9}
+.chatbar>div{display:flex;max-width:520px;margin:auto;gap:6px;align-items:flex-end}
+.vp{display:none;max-width:520px;margin:0 auto 8px;gap:8px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:8px 12px}
+.gi{width:46px;height:46px;border-radius:14px;background:var(--ac);color:#fff;display:grid;place-items:center;flex:none}
+.code{font-size:50px;font-weight:800;letter-spacing:10px;margin:14px 0;background:var(--ac);-webkit-background-clip:text;background-clip:text;color:transparent}
+.tt{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:320px;margin:auto}.tt button{aspect-ratio:1;background:var(--card);border:1px solid var(--bd);color:var(--tx);font-size:44px;font-weight:800;border-radius:20px;padding:0}.tt button.X{color:#ff2e7e}.tt button.O{color:#1d9bf0}
+.bar{height:12px;border-radius:6px;background:var(--bd);overflow:hidden;margin:6px 0 14px}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .1s}
+.tapbtn{width:100%;height:170px;font-size:34px;border-radius:30px;margin-top:6px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.rps{display:flex;gap:10px;justify-content:center}.rps button{font-size:42px;padding:16px 20px;background:var(--card);border:1px solid var(--bd);border-radius:20px}
+.seg{display:flex;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:4px;margin:4px 0 10px}.seg button{flex:1;background:none;color:var(--mu);padding:9px;border-radius:12px}.seg button.on{background:var(--ac);color:#fff}
+.gi{font-weight:800;font-size:18px}
+.chip{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:10px;background:var(--bg);color:var(--mu);margin-left:6px}.chip.o{background:color-mix(in srgb,#ff2e7e 15%,transparent);color:#ff2e7e}
+.ck{width:24px;height:24px;border-radius:50%;border:2px solid var(--bd);display:grid;place-items:center;font-size:13px;color:#fff;font-weight:800;flex:none}.ck.on{background:var(--ac);border-color:transparent}
+.filec{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.12);border-radius:12px;padding:10px 12px;cursor:pointer;word-break:break-all}
+.tpost{padding:2px 16px 14px;font-size:18px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.tt2{width:100%;height:100%;padding:10px;font-size:12px;line-height:1.3;overflow:hidden;word-break:break-word;background:linear-gradient(135deg,color-mix(in srgb,#ff8a3d 18%,var(--card)),color-mix(in srgb,#7b3fe4 18%,var(--card)))}
+nav button{background:none;color:var(--mu);padding:8px 12px;border-radius:18px;position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .25s,background .3s,box-shadow .3s}.lb{font-size:10px;font-weight:700}
+nav button:active{transform:scale(.9)}
+nav button.on{color:#fff;background:var(--ac);transform:translateY(-8px);box-shadow:0 12px 22px rgba(255,46,126,.42),inset 0 2px 0 rgba(255,255,255,.5),inset 0 -4px 0 rgba(0,0,0,.18);animation:rise .55s cubic-bezier(.2,1.5,.4,1) both}
+nav button.on svg{animation:flip .9s ease both,float 2.8s ease-in-out .9s infinite;filter:drop-shadow(0 3px 2px rgba(0,0,0,.35))}
+nav button.add{background:var(--ac);color:#fff;padding:12px 16px;border-radius:18px;box-shadow:0 8px 18px rgba(255,46,126,.4),inset 0 2px 0 rgba(255,255,255,.45),inset 0 -4px 0 rgba(0,0,0,.18)}
+nav button.add svg{filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+@keyframes rise{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+@keyframes flip{from{transform:perspective(160px) rotateY(0) scale(.7)}55%{transform:perspective(160px) rotateY(230deg) scale(1.3)}to{transform:perspective(160px) rotateY(360deg) scale(1.1)}}
+@keyframes float{0%,100%{transform:perspective(160px) rotateX(0) translateY(0) scale(1.1)}50%{transform:perspective(160px) rotateX(22deg) translateY(-2px) scale(1.18)}}
+@media(prefers-reduced-motion:reduce){nav button.on,nav button.on svg{animation:none}}
+.ph.st{position:relative;background:none;padding:14px 8px 6px 14px}
+.ph.st .nm{color:var(--tx);text-shadow:none}.ph.st .mu{color:var(--mu);text-shadow:none;opacity:1}.ph.st button.p{color:var(--tx)}.ph.st .av{border:0}
+.txt{position:relative;padding:4px 18px 14px;font-size:19px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.cap,.txt{line-height:1.65}
+.cap.cl{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cmp{display:flex;align-items:center;gap:12px;background:var(--card);margin:2px 12px 16px;padding:12px 14px;border-radius:24px;border:1px solid var(--bd);cursor:pointer;box-shadow:0 6px 20px rgba(30,30,80,.06)}.cmpt{flex:1;color:var(--mu);font-weight:600}.cmpi{color:#ff2e7e}
+@keyframes sh{to{background-position:-200% 0}}
+.skl{background:linear-gradient(90deg,var(--bd) 25%,color-mix(in srgb,var(--bd) 45%,var(--card)) 50%,var(--bd) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:16px}
+.post.sk{animation:none;padding-bottom:4px}
+.bn{font-size:1.12em;line-height:1.3}
+.crop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px}
+.cr-t{color:#fff;font-weight:800;font-size:18px}
+.cr-s{position:relative;overflow:hidden;touch-action:none;cursor:grab;border-radius:6px}
+.cr-i{position:absolute;max-width:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.cr-m{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2000px rgba(0,0,0,.62);border:2px solid #fff;pointer-events:none}
+.cr-z{width:min(320px,80vw);accent-color:#ff2e7e;margin:0;padding:0;border:0;background:none}
+.cr-b{display:flex;gap:12px;width:min(320px,80vw)}.cr-b button{flex:1}
+</style></head><body>
+<div id="toast"></div><div id="app"></div>
+<script>
+// ====== SUDHU EI DUITA BOSHAO ======
+const SB_URL='https://eeaseyqozgicsdtpyziv.supabase.co', SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlYXNleXFvemdpY3NkdHB5eml2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3OTMxMTUsImV4cCI6MjEwOTM2OTExNX0.zEdnhF9kEM9wNoVd_v8lTpi4Z5xWHC2qTN9LgO6L2LY';
+// ===================================
+const mem={};const LS={getItem:k=>{try{return localStorage.getItem(k)}catch{return mem[k]??null}},setItem:(k,v)=>{try{localStorage.setItem(k,v)}catch{mem[k]=v}},removeItem:k=>{try{localStorage.removeItem(k)}catch{delete mem[k]}}};
+const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{storage:LS,persistSession:true}});
+window.onerror=(m,u,l)=>{const d=document.createElement('div');d.style.cssText='position:fixed;bottom:100px;left:8px;right:8px;background:#b00020;color:#fff;padding:10px;border-radius:12px;z-index:99;font-size:13px';d.textContent='Error: '+m+' (line '+l+')';document.body.appendChild(d)};
+const $=s=>document.querySelector(s),app=$('#app');
+const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ago=t=>{const s=(Date.now()-new Date(t))/1e3;if(s<60)return 'just now';const m=~~(s/60);if(m<60)return m+' min ago';const h=~~(m/60);if(h<24)return h+(h>1?' hours':' hour')+' ago';const d=~~(h/24);if(d<7)return d+(d>1?' days':' day')+' ago';if(d<30){const w=~~(d/7);return w+(w>1?' weeks':' week')+' ago'}if(d<365){const o=~~(d/30);return o+(o>1?' months':' month')+' ago'}const y=~~(d/365);return y+(y>1?' years':' year')+' ago'};
+const lk=t=>e(t).replace(/((?:https?:\/\/|www\.)[^\s<]+)/g,u=>{const m=u.match(/[.,!?)]*$/)[0],c=u.slice(0,u.length-m.length),h=c.startsWith('www.')?'https://'+c:c;return `<a class="lk" href="${h}" target="_blank" rel="noopener noreferrer nofollow" onclick="event.stopPropagation()">${c}</a>${m}`});
+const I={home:'<path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',plus:'<path d="M12 5v14M5 12h14"/>',chat:'<path d="M5 4h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-7l-5 4v-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>',bell:'<path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7M10 20a2 2 0 0 0 4 0"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',heart:'<path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/>',comment:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',share:'<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13"/>',sl:'<path d="M4 6h8M18 6h2M4 12h2M12 12h8M4 18h10M20 18h0"/><circle cx="15" cy="6" r="2.5"/><circle cx="9" cy="12" r="2.5"/><circle cx="17" cy="18" r="2.5"/>',back:'<path d="M15 18l-6-6 6-6"/>',mic:'<rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',img:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/>',stop:'<rect x="6" y="6" width="12" height="12" rx="3"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',cam:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',lock:'<rect x="4" y="11" width="16" height="10" rx="3"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',up:'<path d="M12 19V5M5 12l7-7 7 7"/>',dl:'<path d="M12 3v12M7 11l5 5 5-5M5 21h14"/>',more:'<circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',ban:'<circle cx="12" cy="12" r="9"/><path d="M5.7 5.7l12.6 12.6"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',game:'<rect x="2" y="6" width="20" height="12" rx="6"/><path d="M7 12h4M9 10v4M16 11.5h.01M18.5 13h.01"/>',clip:'<path d="M21 11.5l-8.6 8.6a5 5 0 0 1-7-7l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.4-2.4l7.9-7.9"/>',grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'};
+const ic=(n,s=22,f='none')=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="${f}" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
+const BP='M'+[...Array(200)].map((_,i)=>{const t=i*2*Math.PI/200-Math.PI/2,r=10.55+0.95*Math.cos(8*t);return (12+r*Math.cos(t)).toFixed(2)+' '+(12+r*Math.sin(t)).toFixed(2)}).join('L')+'Z';
+const bd=(s=16)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" style="margin-left:4.5px;flex:none"><path fill="#1d9bf0" d="${BP}"/><path d="M7.74 12.7L10.72 15.35L16.59 9.15" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const vb=(p,s=16)=>p&&p.verified&&p.badge_visible!==false?bd(s):'';
+const nmr=p=>((p?.full_name||'').trim())||p?.username||'User';
+const nm=p=>{const t=e(nmr(p));return /[\u0980-\u09FF]/.test(t)?`<span class="bn">${t}</span>`:t};
+const DEF='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 9"><rect width="9" height="9" fill="#b9bcc8"/><circle cx="4.5" cy="3.6" r="1.8" fill="#fff"/><path d="M1 9a3.5 3.5 0 017 0z" fill="#fff"/></svg>');
+const av=(p,c='')=>`<img class="av ${c}" src="${e(p?.avatar_url)||DEF}" onerror="this.src='${DEF}'">`;
+const PM={},NM={},PO={};let curPost=0,replyTo=null,BL=new Set(),BB=new Set();
+const reg=p=>(PM[p.id]=p,p.id);
+let me,prof,tab='feed',chan=[],unread=0,chatWith=null,CH=null,MG=new Set(),msgTab='p',GI=null,CF=null;
+const hid=id=>BL.has(id)||BB.has(id);
+// presence
+const online=p=>p&&(p.id==me?.id||Date.now()-new Date(p.last_seen)<45000);
+const stT=p=>`<span class="od ${online(p)?'':'off'}"></span>${online(p)?'Active now':'Last seen '+ago(p.last_seen)}`;
+const st=p=>`<span class="stx" data-u="${p.id}">${stT(p)}</span>`;
+const refSt=()=>document.querySelectorAll('.stx').forEach(el=>{const p=PM[el.dataset.u];if(p)el.innerHTML=stT(p)});
+document.documentElement.dataset.theme=LS.getItem('th')||'light';
+
+function toast(t,act,ms){const x=$('#toast');x.textContent=t;x.onclick=act?()=>{x.style.display='none';act()}:null;x.style.cursor=act?'pointer':'default';x.style.display='block';clearTimeout(x.t);x.t=setTimeout(()=>x.style.display='none',ms||3500);
+ if(document.hidden&&window.Notification&&Notification.permission==='granted')new Notification('OpenTap',{body:t})}
+function sheet(html,cls=''){const s=document.createElement('div');s.className='sheet';s.onclick=x=>x.target==s&&s.remove();s.innerHTML='<div class="'+cls+'">'+html+'</div>';document.body.appendChild(s);return s}
+const closeSheet=()=>document.querySelectorAll('.sheet').forEach(s=>s.remove());
+function ask(title,ph,type,cb,val){const s=sheet(`<b style="font-size:18px">${title}</b><input id="ak" type="${type}" placeholder="${ph}" autocomplete="off"><button style="width:100%;margin-top:8px" id="ako">Confirm</button>`);
+ $('#ak').value=val||'';$('#ak').focus();$('#ako').onclick=()=>{const v=$('#ak').value;s.remove();cb(v)}}
+async function upload(file){const p=`${me.id}/${Date.now()}-${file.name.replace(/[^\w.]/g,'_')}`;
+ const {error}=await sb.storage.from('media').upload(p,file,{contentType:file.type,cacheControl:'31536000'});if(error){toast(error.message);return null}
+ return sb.storage.from('media').getPublicUrl(p).data.publicUrl}
+const pick=acc=>new Promise(r=>{const i=document.createElement('input');i.type='file';i.accept=acc;i.onchange=()=>r(i.files[0]);i.click()});
+const grow=t=>{t.style.height='auto';t.style.height=Math.min(t.scrollHeight,120)+'px'};
+const kd=(ev,fn)=>{if(ev.key=='Enter'&&!ev.shiftKey&&!matchMedia('(pointer:coarse)').matches){ev.preventDefault();fn()}};
+
+// ---------- AUTH ----------
+function authView(mode='in'){
+ app.innerHTML=`<div class="auth"><div class="brand" style="font-size:46px">Open<b>Tap</b></div><p class="mu" style="margin:10px 0 34px;font-size:14px">Tap. Share. Connect.</p>
+ ${mode=='up'?'<input id="fn" placeholder="Nickname"><input id="un" placeholder="Username" autocapitalize="none">':''}
+ <input id="em" type="email" placeholder="Email"><input id="pw" type="password" placeholder="Password (min 6)">
+ <button style="width:100%;margin-top:12px;padding:14px" onclick="doAuth('${mode}')">${mode=='in'?'Log in':'Create account'}</button>
+ <p class="mu" style="margin-top:22px;font-size:14px">${mode=='in'?'No account yet?':'Already have an account?'} <a href="#" style="color:#ff2e7e;font-weight:700;text-decoration:none" onclick="authView('${mode=='in'?'up':'in'}');return false">${mode=='in'?'Sign up':'Log in'}</a></p></div>`}
+async function doAuth(m){const email=$('#em').value.trim(),password=$('#pw').value;let r;
+ if(m=='up'){const username=$('#un').value.trim().toLowerCase().replace(/\W/g,'');if(!username)return toast('Please enter a username');
+  r=await sb.auth.signUp({email,password,options:{data:{username,full_name:$('#fn').value.trim()}}})}
+ else r=await sb.auth.signInWithPassword({email,password});
+ if(r.error)return toast(r.error.message);
+ if(!r.data.session)return toast('Please confirm your email, then log in');
+ boot()}
+async function boot(){const {data:{session}}=await sb.auth.getSession();if(!session)return authView();
+ me=session.user;await loadProf();await loadBlocks();subscribe();heartbeat();go('feed')}
+async function loadProf(){prof=(await sb.from('profiles').select('*').eq('id',me.id).single()).data;PM[me.id]=prof}
+async function loadBlocks(){const {data}=await sb.from('blocks').select('*');BL=new Set();BB=new Set();(data||[]).forEach(b=>{if(b.blocker_id==me.id)BL.add(b.blocked_id);else BB.add(b.blocker_id)})}
+function heartbeat(){const b=off=>sb.from('profiles').update({last_seen:new Date(Date.now()-(off?60000:0)).toISOString()}).eq('id',me.id);
+ b();setInterval(()=>!document.hidden&&b(),20000);document.addEventListener('visibilitychange',()=>b(document.hidden));addEventListener('pagehide',()=>b(true));
+ setInterval(async()=>{const ids=Object.keys(PM);if(!ids.length)return;const {data}=await sb.from('profiles').select('id,last_seen,verified,badge_visible').in('id',ids.slice(0,100));(data||[]).forEach(d=>PM[d.id]&&Object.assign(PM[d.id],d));refSt()},15000)}
+
+// ---------- SHELL ----------
+function shell(title,body,right='',logo=false){app.style.paddingBottom='';app.innerHTML=`<div class="top">${logo?`<span class="brand">Open<b>Tap</b></span>`:`<h1>${title}</h1>`}<span class="r">${right}</span></div>${body}
+<nav>${[['feed','home','Home'],['msg','chat','Chats'],['add','plus',''],['notif','bell','Activity'],['me','user','Profile']].map(([t,i,l])=>`<button class="${t=='add'?'add':tab==t?'on':''}" onclick="go('${t}')">${ic(i,t=='add'?24:23)}${l?`<span class="lb">${l}</span>`:''}${t=='notif'?`<span class="dot" id="nd" style="display:${unread?'block':'none'}">${unread}</span>`:''}</button>`).join('')}</nav>`}
+function updDot(){const d=$('#nd');if(d){d.textContent=unread;d.style.display=unread?'block':'none'}}
+function go(t,arg){if(G)leaveRoom();if(mr&&mr.state=='recording'){clearInterval(vT);mr.onstop=()=>mr.stream.getTracks().forEach(x=>x.stop());mr.stop()}tab=t;chatWith=null;CH=null;({feed,add,msg,notif,search:searchPage,games:gamesPage,me:()=>profile(me.id),settings})[t](arg)}
+function openP(id){chatWith=null;CH=null;tab=id==me.id?'me':'';profile(id)}
+
+// ---------- FEED ----------
+const PQ='*,profiles!posts_user_id_fkey(id,username,full_name,avatar_url,verified,badge_visible,last_seen),reactions(user_id,type),comments(count)';
+const SKEL='<div class="post sk"><div class="skl" style="height:44px;width:60%;margin:14px"></div><div class="skl" style="height:260px;margin:0 10px"></div><div class="skl" style="height:36px;width:50%;margin:14px"></div></div>';
+async function feed(){shell('OpenTap','<div id="list">'+SKEL+SKEL+'</div>',`<button class="ib" onclick="go('games')">${ic('game',21)}</button><button class="ib" onclick="go('search')">${ic('search',20)}</button>`,true);
+ const {data,error}=await sb.from('posts').select(PQ).order('created_at',{ascending:false}).limit(40);
+ if(error)return $('#list').innerHTML=`<p class="empty">${e(error.message)}</p>`;
+ const L=data.filter(p=>!hid(p.user_id));
+ const cmp=`<div class="cmp" onclick="go('add')">${av(prof)}<div class="cmpt">What's on your mind, ${e(nmr(prof).split(' ')[0])}?</div><span class="cmpi">${ic('img',22)}</span></div>`;
+ $('#list').innerHTML=cmp+(L.length?L.map(postHTML).join(''):`<div class="empty">${ic('cam',54)}<b>No posts yet</b>Tap + below to share your first post</div>`)}
+function postHTML(p){const pr=p.profiles,mine=p.reactions.find(r=>r.user_id==me.id),n=p.reactions.length,nc=p.comments[0]?.count||0,m=!!p.media_url;reg(pr);PO[p.id]=p;
+ const hb=!mine?ic('heart',21):mine.type=='❤️'?ic('heart',21,'currentColor'):`<span style="font-size:19px;line-height:21px">${mine.type}</span>`;
+ const hd=`<div class="ph${m?'':' st'}"><div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer" onclick="openP('${pr.id}')">${av(pr)}<div style="min-width:0"><div class="nm">${nm(pr)}${vb(pr)}</div><div class="mu">${ago(p.created_at)}</div></div></div><button class="p" onclick="postMenu(${p.id})">${ic('more',22,'currentColor')}</button></div>`;
+ let body;
+ if(m){const u=e(p.media_url),v=p.media_type=='video';
+  body=`<div class="mw ${v?'':'im'}" ${v?'':`style="--bgi:url('${u}')" ondblclick="burst(this,${p.id})"`}>${v?`<video class="media" src="${u}" controls playsinline preload="metadata"></video>`:`<img class="media" src="${u}" loading="lazy">`}</div>`}
+ else{const t=p.caption||'';body=`<div class="txt" style="${t.length<90?'font-size:22px;font-weight:600;':''}" ondblclick="burst(this,${p.id})">${lk(t)}</div>`}
+ const act=`<div class="act"><button class="pill ${mine?'on':''}" onpointerdown="lpS(${p.id},'p',this)" onpointerup="lpE()" onpointerleave="lpE()" oncontextmenu="return false" onclick="hClick(${p.id})">${hb}<small>${n||''}</small></button><button class="pill" onclick="comments(${p.id})">${ic('comment',21)}<small>${nc||''}</small></button><button class="pill" onclick="shareP(${p.id})">${ic('share',21)}</button><span class="mu">${n?[...new Set(p.reactions.map(r=>r.type))].slice(0,3).join(''):''}</span></div>`;
+ const cap=m&&p.caption?`<div class="cap cl" onclick="this.classList.toggle('cl')"><b>${nm(pr)}</b> ${lk(p.caption)}</div>`:'<div style="height:14px"></div>';
+ return `<div class="post" id="po${p.id}">${hd}${body}${act}${cap}</div>`}
+function burst(el,id){const d=document.createElement('div');d.className='burst';d.innerHTML=ic('heart',90,'currentColor');el.appendChild(d);setTimeout(()=>d.remove(),900);if(!PO[id].reactions.find(r=>r.user_id==me.id))react(id,'❤️')}
+function postMenu(id){const p=PO[id],own=p.user_id==me.id,u=p.profiles;
+ sheet(`${p.media_url?`<div class="sw" style="cursor:pointer;padding:14px 4px" onclick="closeSheet();dl('${e(p.media_url)}')">${ic('dl',22)}<span style="flex:1;margin-left:12px">Download</span></div>`:''}
+ ${own?`<div class="sw" style="cursor:pointer;padding:14px 4px;color:#e0245e" onclick="delPost(${id})">${ic('trash',22)}<span style="flex:1;margin-left:12px">Delete post</span></div>`
+ :`<div class="sw" style="cursor:pointer;padding:14px 4px" onclick="closeSheet();reportSheet('post',${id},'${u.id}')">${ic('flag',22)}<span style="flex:1;margin-left:12px">Report post</span></div>
+ <div class="sw" style="cursor:pointer;padding:14px 4px;color:#e0245e" onclick="closeSheet();blockAsk('${u.id}')">${ic('ban',22)}<span style="flex:1;margin-left:12px">Block ${nm(u)}</span></div>`}`)}
+async function delPost(id){closeSheet();const {error}=await sb.from('posts').delete().eq('id',id);if(error)return toast(error.message);$('#po'+id)?.remove();toast('Post deleted')}
+let lpT,lpF;const lpS=(id,k='p',el)=>{lpF=0;lpT=setTimeout(()=>{lpF=1;rxPick(id,k,el)},420)},lpE=()=>clearTimeout(lpT),hClick=(id,k='p')=>{if(!lpF)react(id,'❤️',k)};
+function rxPick(id,k='p',el){document.querySelector('.rx')?.remove();const d=document.createElement('div');d.className='rx';
+ d.innerHTML=['❤️','🔥','😂','😮','😢','👏'].map(x=>`<button onclick="react(${id},'${x}','${k}');this.parentNode.remove()">${x}</button>`).join('');document.body.appendChild(d);
+ if(el){const r=el.getBoundingClientRect(),w=d.offsetWidth,h=d.offsetHeight;let x=r.left+r.width/2-w/2;x=Math.max(8,Math.min(innerWidth-w-8,x));let y=r.top-h-10;if(y<8)y=r.bottom+10;d.style.left=x+'px';d.style.top=y+'px'}
+ else{d.style.left='50%';d.style.top='40%';d.style.transform='translateX(-50%)'}
+ setTimeout(()=>d.remove(),5000)}
+async function react(id,type,k='p'){const T=k=='c'?'comment_reactions':'reactions',F=k=='c'?'comment_id':'post_id';
+ const cur=(await sb.from(T).select('type').eq(F,id).eq('user_id',me.id)).data[0];
+ if(cur&&cur.type==type)await sb.from(T).delete().eq(F,id).eq('user_id',me.id);
+ else if(cur)await sb.from(T).update({type}).eq(F,id).eq('user_id',me.id);
+ else await sb.from(T).insert({[F]:id,user_id:me.id,type});
+ k=='c'?loadC(curPost):refreshPost(id)}
+async function refreshPost(id){const {data}=await sb.from('posts').select(PQ).eq('id',id).single();const el=$('#po'+id);if(el&&data){el.outerHTML=postHTML(data);const n=$('#po'+id);if(n)n.style.animation='none'}}
+async function dl(u,nme){toast('Downloading…');try{const b=await(await fetch(u)).blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nme||('opentap-'+(decodeURIComponent(u.split('/').pop().split('?')[0]).replace(/^\d+-/,'')||'file'));document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}catch{window.open(u,'_blank')}}
+function shareP(id){const p=PO[id];if(p.media_url)return share(p.media_url);const t=p.caption||'';navigator.share?navigator.share({text:t}).catch(()=>{}):(navigator.clipboard?.writeText(t),toast('Copied'))}
+function share(u){navigator.share?navigator.share({title:'OpenTap',url:u}).catch(()=>{}):(navigator.clipboard?.writeText(u),toast('Link copied'))}
+
+// ---------- BLOCK / REPORT ----------
+function reportSheet(kind,id,uid){const R=['Spam','Harassment or bullying','Nudity or sexual content','False information','Something else'];
+ sheet(`<b style="font-size:18px">Report</b><p class="mu" style="margin:4px 0 8px">Why are you reporting this?</p>${R.map(r=>`<div class="sw" style="cursor:pointer;padding:14px 4px" onclick="doReport('${kind}',${id||0},'${uid}','${r}')">${r}</div>`).join('')}`)}
+async function doReport(kind,id,uid,reason){closeSheet();const {error}=await sb.from('reports').insert({reporter_id:me.id,target_user:uid,post_id:kind=='post'?id:null,reason});toast(error?error.message:'Report sent. Thank you.')}
+function blockAsk(uid){const p=PM[uid];sheet(`<b style="font-size:18px">Block ${nm(p)}?</b><p class="mu" style="margin:8px 0 14px">You will not see their posts, and they will not be able to message you.</p><button class="dg" style="width:100%" onclick="doBlock('${uid}')">Block</button><button class="g" style="width:100%;margin-top:8px" onclick="closeSheet()">Cancel</button>`)}
+async function doBlock(uid){closeSheet();const {error}=await sb.from('blocks').insert({blocker_id:me.id,blocked_id:uid});if(error)return toast(error.message);BL.add(uid);toast('Blocked');go('feed')}
+async function unblock(uid){const {error}=await sb.from('blocks').delete().eq('blocker_id',me.id).eq('blocked_id',uid);if(error)return toast(error.message);BL.delete(uid);toast('Unblocked');closeSheet();tab==''?profile(uid):settings()}
+async function blockedList(){const ids=[...BL];let L=[];if(ids.length)L=(await sb.from('profiles').select('*').in('id',ids)).data||[];
+ sheet(`<b style="font-size:18px">Blocked accounts</b><div style="margin-top:8px">${L.map(p=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0">${av(p)}<div style="flex:1"><div class="nm">${nm(p)}${vb(p)}</div><div class="mu">@${e(p.username)}</div></div><button class="g" onclick="unblock('${reg(p)}')">Unblock</button></div>`).join('')||'<p class="mu" style="padding:14px 0">No blocked accounts</p>'}</div>`)}
+function profMenu(uid){const bl=BL.has(uid);sheet(`<div class="sw" style="cursor:pointer;padding:14px 4px" onclick="closeSheet();reportSheet('user',0,'${uid}')">${ic('flag',22)}<span style="flex:1;margin-left:12px">Report</span></div>
+ <div class="sw" style="cursor:pointer;padding:14px 4px;color:#e0245e" onclick="${bl?`unblock('${uid}')`:`closeSheet();blockAsk('${uid}')`}">${ic('ban',22)}<span style="flex:1;margin-left:12px">${bl?'Unblock':'Block'}</span></div>`)}
+
+// ---------- COMMENTS ----------
+function comments(id){sheet(`<b style="font-size:18px">Comments</b><div id="cl" class="cl"></div><div id="rb" class="rb"></div><div class="cin"><textarea id="ci" class="ta" rows="1" placeholder="Add a comment…" oninput="grow(this)" onkeydown="kd(event,()=>sendC(${id}))"></textarea><button class="sd" onclick="sendC(${id})">${ic('up',22)}</button></div>`,'cmt');replyTo=null;loadC(id,true)}
+async function loadC(id,end){curPost=id;const l0=$('#cl'),st0=l0?l0.scrollTop:0;
+ const {data}=await sb.from('comments').select('*,profiles!comments_user_id_fkey(id,username,full_name,avatar_url,verified,badge_visible,last_seen),comment_reactions(user_id,type)').eq('post_id',id).order('created_at');
+ const all=(data||[]).filter(c=>!hid(c.user_id));
+ const item=(c,rep)=>{reg(c.profiles);const my=c.comment_reactions.find(r=>r.user_id==me.id),n=c.comment_reactions.length,root=c.parent_id||c.id;
+  const rt=rep?(all.find(x=>x.user_id==c.reply_to)?.profiles||all.find(x=>x.id==c.parent_id)?.profiles):null;
+  const hb=!my?ic('heart',18):my.type=='❤️'?`<span style="color:#ff2e7e">${ic('heart',18,'currentColor')}</span>`:`<span style="font-size:16px;line-height:18px">${my.type}</span>`;
+  return `<div style="display:flex;gap:10px;padding:8px 0;${rep?'margin-left:20px;padding-left:12px;border-left:2px solid var(--bd)':''}">${av(c.profiles,rep?'sm':'')}<div style="flex:1;min-width:0">
+  <div class="nm" style="display:inline-flex">${nm(c.profiles)}${vb(c.profiles,14)}</div>${rt?`<div class="mu" style="margin:1px 0">Replying to <b style="color:var(--tx)">${nm(rt)}</b></div>`:''}
+  <div style="white-space:pre-wrap;word-break:break-word">${lk(c.body)}</div>
+  <div class="mu" style="display:flex;gap:16px;margin-top:3px">${ago(c.created_at)}<b style="cursor:pointer" onclick="replyC(${root},'${c.profiles.id}')">Reply</b></div></div>
+  <button class="p" style="align-self:flex-start;flex-direction:column;gap:0" onpointerdown="lpS(${c.id},'c',this)" onpointerup="lpE()" onpointerleave="lpE()" oncontextmenu="return false" onclick="hClick(${c.id},'c')">${hb}<small class="mu">${n||''}</small></button></div>`};
+ $('#cl').innerHTML=all.filter(c=>!c.parent_id).map(c=>item(c,0)+all.filter(r=>r.parent_id==c.id).map(r=>item(r,1)).join('')).join('')||'<p class="mu" style="padding:14px 0">No comments yet. Be the first to comment.</p>';
+ const l=$('#cl');l.scrollTop=end?l.scrollHeight:st0}
+function replyC(root,uid){replyTo={id:root,uid};const rb=$('#rb');rb.style.display='block';rb.innerHTML=`Replying to <b>${nm(PM[uid])}</b> · <span style="cursor:pointer;text-decoration:underline" onclick="cancelR()">Cancel</span>`;$('#ci').focus()}
+function cancelR(){replyTo=null;$('#rb').style.display='none'}
+async function sendC(id){const b=$('#ci').value.trim();if(!b)return;
+ const {error}=await sb.from('comments').insert({post_id:id,user_id:me.id,body:b,parent_id:replyTo?replyTo.id:null,reply_to:replyTo?replyTo.uid:null});
+ if(error)return toast(error.message);$('#ci').value='';$('#ci').style.height='auto';cancelR();loadC(id,true);refreshPost(id)}
+
+// ---------- UPLOAD ----------
+function add(){shell('New post',`<div class="pad"><textarea id="cap" rows="4" placeholder="What is on your mind? Write a caption, share a link, or add a photo or video." style="font-size:16px"></textarea>
+ <div id="pv" class="post" style="margin:8px 0 6px;min-height:150px;display:grid;place-items:center;border:2px dashed var(--bd);cursor:pointer" onclick="choose()"><div class="mu" style="text-align:center">${ic('cam',38)}<br>Add a photo or video (optional)</div></div>
+ <div class="mu" id="hd" style="margin:2px 4px 12px">You can post only a caption. Photos and videos upload in HD, with no compression.</div><button id="pb" style="width:100%;padding:14px" onclick="publish()">Share post</button></div>`)}
+let file;async function choose(){file=await pick('image/*,video/*');if(!file)return;const u=URL.createObjectURL(file);
+ $('#pv').style.border='0';$('#pv').innerHTML=file.type.startsWith('video')?`<video class="media" src="${u}" controls></video>`:`<img class="media" src="${u}">`;
+ $('#hd').innerHTML='HD · original quality · '+(file.size/1048576).toFixed(1)+' MB · <a href="#" style="color:#ff2e7e;font-weight:700" onclick="clearFile();return false">Remove</a>'}
+function clearFile(){file=null;$('#pv').style.border='2px dashed var(--bd)';$('#pv').innerHTML=`<div class="mu" style="text-align:center">${ic('cam',38)}<br>Add a photo or video (optional)</div>`;$('#hd').textContent='You can post only a caption. Photos and videos upload in HD, with no compression.'}
+async function publish(){const cap=$('#cap').value.trim();if(!file&&!cap)return toast('Add a caption, photo or video');$('#pb').textContent='Posting…';$('#pb').disabled=true;
+ let url=null;if(file){url=await upload(file);if(!url){$('#pb').disabled=false;$('#pb').textContent='Share post';return}}
+ const {error}=await sb.from('posts').insert({user_id:me.id,media_url:url,media_type:file?(file.type.startsWith('video')?'video':'image'):null,caption:cap});
+ file=null;if(error){toast(error.message);$('#pb').disabled=false;$('#pb').textContent='Share post'}else go('feed')}
+
+// ---------- SEARCH ----------
+function searchPage(){shell('Search',`<div class="pad"><div style="position:relative"><input id="sq2" placeholder="Search by username or name" oninput="srch2(this.value)" style="padding-left:44px" autocomplete="off" autocapitalize="none"><span style="position:absolute;left:14px;top:19px;color:var(--mu)">${ic('search',18)}</span></div></div><div id="sl" style="margin-top:8px"></div>`);$('#sq2').focus();srch2('')}
+async function srch2(q){q=q.trim().replace(/[%,()]/g,'');let r=sb.from('profiles').select('*').limit(30);if(q)r=r.or(`username.ilike.%${q}%,full_name.ilike.%${q}%`);const {data}=await r;
+ $('#sl').innerHTML=(data||[]).filter(p=>!hid(p.id)).map(p=>`<div class="row" onclick="openP('${reg(p)}')">${av(p)}<div><div class="nm">${nm(p)}${vb(p)}</div><div class="mu">@${e(p.username)}</div></div></div>`).join('')||'<p class="empty">No users found</p>'}
+
+// ---------- MESSAGES ----------
+async function msg(){shell('Messages',`<div class="pad"><div class="seg"><button class="${msgTab=='p'?'on':''}" onclick="msgTab='p';msg()">People</button><button class="${msgTab=='g'?'on':''}" onclick="msgTab='g';msg()">Groups</button></div>${msgTab=='p'?`<div style="position:relative"><input id="sq" placeholder="Search people…" oninput="srch(this.value)" style="padding-left:44px"><span style="position:absolute;left:14px;top:19px;color:var(--mu)">${ic('search',18)}</span></div>`:''}</div><div id="ml" style="margin-top:8px"></div>`,msgTab=='g'?`<button class="ib" onclick="newGroup()">${ic('plus',20)}</button>`:'');msgTab=='p'?srch(''):groupsView()}
+async function srch(q){q=q.trim().replace(/[%,()]/g,'');let r=sb.from('profiles').select('*').neq('id',me.id).limit(30);if(q)r=r.or(`username.ilike.%${q}%,full_name.ilike.%${q}%`);const {data}=await r;
+ $('#ml').innerHTML=(data||[]).filter(p=>!hid(p.id)).map(p=>`<div class="row" onclick="chat('${reg(p)}')"><span onclick="event.stopPropagation();openP('${p.id}')">${av(p)}</span><div><div class="nm">${nm(p)}${vb(p)}</div><div class="mu">${st(p)}</div></div></div>`).join('')||'<p class="empty">No users found</p>'}
+// ---- groups list / search / create ----
+const gLetter=g=>e((g.name[0]||'G').toUpperCase());
+async function groupsView(){const el=$('#ml');el.innerHTML=`<div class="pad"><input id="gsq" placeholder="Search groups to join…" oninput="gfind(this.value)" autocomplete="off"></div><div id="gres"></div><div class="sec">Your groups</div><div id="gmine"></div>`;
+ const {data}=await sb.from('group_members').select('role,groups(id,name,approval,owner_id,group_members(count))').eq('user_id',me.id);
+ const L=(data||[]).filter(x=>x.groups);L.forEach(x=>GR[x.groups.id]=x.groups);MG=new Set(L.map(x=>x.groups.id));
+ const gm=$('#gmine');if(!gm)return;
+ gm.innerHTML=L.map(x=>{const g=x.groups;return `<div class="row" onclick="groupChat('${g.id}')"><div class="gi" style="border-radius:50%">${gLetter(g)}</div><div><div class="nm">${e(g.name)}</div><div class="mu">${g.group_members[0]?.count||0} members · ${x.role}</div></div></div>`}).join('')||`<div class="empty">${ic('chat',46)}<b>No groups yet</b>Tap + to create one</div>`}
+async function gfind(q){q=q.trim().replace(/[%,()]/g,'');const el=$('#gres');if(!q){el.innerHTML='';return}
+ const {data}=await sb.from('groups').select('id,name,approval,owner_id').ilike('name','%'+q+'%').limit(20);
+ el.innerHTML=(data||[]).map(g=>{GR[g.id]=GR[g.id]||g;const m=MG.has(g.id);return `<div class="row" style="cursor:default"><div class="gi" style="border-radius:50%">${gLetter(g)}</div><div style="flex:1;min-width:0"><div class="nm">${e(g.name)}</div><div class="mu">${g.approval?'Admin approval required':'Anyone can join'}</div></div>${m?`<button class="g" style="padding:8px 14px" onclick="groupChat('${g.id}')">Open</button>`:`<button style="padding:8px 14px" onclick="joinG('${g.id}',this)">${g.approval?'Request':'Join'}</button>`}</div>`}).join('')||'<p class="empty">No groups found</p>'}
+async function joinG(id,b){const {data,error}=await sb.rpc('join_group',{p_gid:id});if(error)return toast(error.message);
+ if(data=='requested'){toast('Request sent. An admin will review it.');b.textContent='Requested';b.disabled=true;b.className='g'}else{if(data=='joined')toast('You joined the group');groupChat(id)}}
+function pickSheet(title,btn,excl,withName,cb){SM=new Set();const s=sheet(`<b style="font-size:18px">${title}</b>${withName?'<input id="gnm" placeholder="Group name" maxlength="40" autocomplete="off">':''}<input id="gq" placeholder="Search people…" autocomplete="off"><div id="gpl" style="max-height:38vh;overflow:auto"></div><button style="width:100%;margin-top:10px" id="gok">${btn}</button>`);
+ const load=async q=>{q=q.trim().replace(/[%,()]/g,'');let r=sb.from('profiles').select('*').neq('id',me.id).limit(40);if(q)r=r.or(`username.ilike.%${q}%,full_name.ilike.%${q}%`);const {data}=await r;
+  $('#gpl').innerHTML=(data||[]).filter(p=>!hid(p.id)&&!excl.has(p.id)).map(p=>`<div class="pk" data-id="${reg(p)}" style="display:flex;align-items:center;gap:12px;padding:8px 0;cursor:pointer">${av(p)}<div style="flex:1;min-width:0"><div class="nm">${nm(p)}${vb(p)}</div><div class="mu">@${e(p.username)}</div></div><span class="ck ${SM.has(p.id)?'on':''}">${SM.has(p.id)?'✓':''}</span></div>`).join('')||'<p class="mu" style="padding:12px 0">No people found</p>';
+  $('#gpl').querySelectorAll('.pk').forEach(el=>el.onclick=()=>{const id=el.dataset.id;SM.has(id)?SM.delete(id):SM.add(id);const c=el.querySelector('.ck');c.classList.toggle('on',SM.has(id));c.textContent=SM.has(id)?'✓':'';$('#gok').textContent=btn+(SM.size?' ('+SM.size+')':'')})};
+ $('#gq').oninput=ev=>load(ev.target.value);load('');$('#gok').onclick=()=>cb(SM,withName?$('#gnm').value.trim():'',s)}
+let SM=new Set(),GR={};
+function newGroup(){pickSheet('New group','Create group',new Set(),true,async(sel,name,s)=>{if(!name)return toast('Enter a group name');
+ const {data:gid,error}=await sb.rpc('create_group',{p_name:name});if(error)return toast(error.message);
+ if(sel.size){const r=await sb.rpc('add_members',{p_gid:gid,p_uids:[...sel]});if(r.error)toast(r.error.message)}s.remove();groupChat(gid)})}
+function confirmBox(t,m,b,fn){CF=fn;sheet(`<b style="font-size:18px">${t}</b><p class="mu" style="margin:8px 0 14px">${m}</p><button class="dg" style="width:100%" onclick="closeSheet();CF()">${b}</button><button class="g" style="width:100%;margin-top:8px" onclick="closeSheet()">Cancel</button>`)}
+// ---- group info / admin tools ----
+async function groupInfo(gid){tab='msg';chatWith=null;CH=null;const PF='id,username,full_name,avatar_url,verified,badge_visible,last_seen';
+ const [{data:g},{data:mem},{data:req}]=await Promise.all([sb.from('groups').select('*').eq('id',gid).single(),sb.from('group_members').select(`role,joined_at,profiles!group_members_user_id_fkey(${PF})`).eq('group_id',gid).order('joined_at'),sb.from('group_requests').select(`created_at,profiles!group_requests_user_id_fkey(${PF})`).eq('group_id',gid).order('created_at')]);
+ const mine=(mem||[]).find(m=>m.profiles.id==me.id);if(!g||!mine){toast('Group not available');return msg()}
+ GR[gid]=g;mem.forEach(m=>reg(m.profiles));(req||[]).forEach(r=>reg(r.profiles));
+ const isO=mine.role=='owner',isA=isO||mine.role=='admin',na=mem.filter(m=>m.role=='admin').length;GI={gid,role:mine.role,ids:new Set(mem.map(m=>m.profiles.id)),na};
+ const chip=r=>r=='owner'?'<span class="chip o">Owner</span>':r=='admin'?'<span class="chip">Admin</span>':'';
+ const can=m=>m.profiles.id!=me.id&&(isO||(isA&&m.role=='member'));
+ shell('Group',`<div class="pcard"><div class="gi" style="width:84px;height:84px;border-radius:50%;font-size:34px;margin:0 auto">${gLetter(g)}</div>
+  <div class="nm" style="justify-content:center;font-size:22px;margin-top:12px">${e(g.name)}</div><div class="mu" style="margin-top:2px">${mem.length} members${isA?` · Admins ${na}/5`:''}</div>
+  ${isA?`<button class="g" style="margin-top:14px" onclick="renameG('${gid}')">Edit group name</button>`:''}</div>
+  ${isA?`<div class="grp"><div class="sw"><div><div style="font-weight:700">Approve new members</div><div class="mu">Admins must approve join requests</div></div><button class="tg ${g.approval?'on':''}" onclick="togApprove('${gid}',this)"></button></div></div>`:''}
+  ${isA&&(req||[]).length?`<div class="sec">Join requests (${req.length})</div><div class="grp">${req.map(r=>`<div class="sw"><div style="display:flex;align-items:center;gap:10px;min-width:0">${av(r.profiles)}<div style="min-width:0"><div class="nm">${nm(r.profiles)}${vb(r.profiles,14)}</div><div class="mu">@${e(r.profiles.username)}</div></div></div><div style="display:flex;gap:6px"><button style="padding:8px 12px" onclick="reqAct('${gid}','${r.profiles.id}',true)">Approve</button><button class="g" style="padding:8px 12px" onclick="reqAct('${gid}','${r.profiles.id}',false)">Decline</button></div></div>`).join('')}</div>`:''}
+  <div class="sec" style="justify-content:space-between"><span>Members</span>${isA?`<button style="padding:7px 14px" onclick="addMem('${gid}')">Add</button>`:''}</div>
+  <div class="grp">${mem.map(m=>`<div class="sw"><div style="display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer" onclick="openP('${m.profiles.id}')">${av(m.profiles)}<div style="min-width:0"><div class="nm">${nm(m.profiles)}${vb(m.profiles,14)}${chip(m.role)}</div><div class="mu">@${e(m.profiles.username)}</div></div></div>${can(m)?`<button class="p" onclick="memberMenu('${m.profiles.id}','${m.role}')">${ic('more',22,'currentColor')}</button>`:''}</div>`).join('')}</div>
+  <div style="padding:0 12px"><button class="g" style="width:100%" onclick="groupChat('${gid}')">Back to chat</button>
+  <button class="dg" style="width:100%;margin-top:10px" onclick="confirmBox('Leave group?','You will stop receiving messages from this group.','Leave',()=>leaveG('${gid}'))">Leave group</button>
+  ${isO?`<button class="dg" style="width:100%;margin-top:10px" onclick="confirmBox('Delete group?','This deletes the group and all its messages for everyone.','Delete',()=>delG('${gid}'))">Delete group</button>`:''}</div>`,`<button class="ib" onclick="groupChat('${gid}')">${ic('back',20)}</button>`)}
+function renameG(gid){ask('Group name','Name','text',async v=>{v=v.trim();if(!v)return;const {error}=await sb.from('groups').update({name:v}).eq('id',gid);if(error)return toast(error.message);GR[gid].name=v;groupInfo(gid)},GR[gid].name)}
+async function togApprove(gid,b){const on=!b.classList.contains('on');const {error}=await sb.from('groups').update({approval:on}).eq('id',gid);if(error)return toast(error.message);b.classList.toggle('on',on);GR[gid].approval=on;toast(on?'New members need admin approval':'Anyone can join this group')}
+async function reqAct(gid,uid,ok){const {error}=await sb.rpc('handle_request',{p_gid:gid,p_uid:uid,p_ok:ok});if(error)return toast(error.message);toast(ok?'Approved':'Declined');groupInfo(gid)}
+function addMem(gid){pickSheet('Add members','Add',GI.ids,false,async(sel,_,s)=>{if(!sel.size)return toast('Select at least one person');const {error}=await sb.rpc('add_members',{p_gid:gid,p_uids:[...sel]});if(error)return toast(error.message);s.remove();toast('Members added');groupInfo(gid)})}
+function memberMenu(uid,role){const g=GI.gid,isO=GI.role=='owner';const R=(t,fn,red)=>`<div class="sw" style="cursor:pointer;padding:14px 4px;${red?'color:#e0245e':''}" onclick="closeSheet();${fn}">${t}</div>`;
+ sheet(`<b style="font-size:18px">${nm(PM[uid])}</b><div style="margin-top:6px">${R('View profile',`openP('${uid}')`)}
+ ${isO&&role=='member'?R('Make admin',`setRole('${g}','${uid}','admin')`):''}${isO&&role=='admin'?R('Remove as admin',`setRole('${g}','${uid}','member')`):''}
+ ${isO?R('Make owner',`confirmBox('Make this person the owner?','You will become an admin.','Make owner',()=>setRole('${g}','${uid}','owner'))`):''}
+ ${R('Remove from group',`confirmBox('Remove member?','They will lose access to this group.','Remove',()=>kickG('${g}','${uid}'))`,1)}</div>`)}
+async function setRole(g,u,r){const {error}=await sb.rpc('set_role',{p_gid:g,p_uid:u,p_role:r});if(error)return toast(error.message);toast('Updated');groupInfo(g)}
+async function kickG(g,u){const {error}=await sb.rpc('kick_member',{p_gid:g,p_uid:u});if(error)return toast(error.message);toast('Member removed');groupInfo(g)}
+async function leaveG(g){const {error}=await sb.rpc('leave_group',{p_gid:g});if(error)return toast(error.message);toast('You left the group');msgTab='g';go('msg')}
+async function delG(g){const {error}=await sb.from('groups').delete().eq('id',g);if(error)return toast(error.message);toast('Group deleted');msgTab='g';go('msg')}
+const chatBar=()=>`<div class="chatbar"><section id="vp" class="vp"></section><div><button class="cb" onclick="attachMenu()">${ic('clip',24)}</button><textarea id="mi" class="ta" rows="1" placeholder="Message…" oninput="grow(this)" onkeydown="kd(event,sendT)"></textarea><button class="cb" id="mic" onclick="rec()">${ic('mic',24)}</button><button class="sd" onclick="sendT()">${ic('up',22)}</button></div></div>`;
+async function chat(id){const p=PM[id];chatWith=p;CH={k:'dm',p};app.style.paddingBottom='0';app.innerHTML=`<div class="top"><div style="display:flex;align-items:center;gap:10px;min-width:0"><button class="ib" onclick="go('msg')">${ic('back')}</button><div style="display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0" onclick="openP('${p.id}')">${av(p)}<div style="min-width:0"><div class="nm">${nm(p)}${vb(p)}</div><div class="mu">${st(p)}</div></div></div></div></div>
+ <div id="cm" class="pad" style="min-height:70vh"></div>${chatBar()}`;
+ const {data}=await sb.from('messages').select('*').or(`and(sender_id.eq.${me.id},receiver_id.eq.${p.id}),and(sender_id.eq.${p.id},receiver_id.eq.${me.id})`).order('created_at');
+ $('#cm').innerHTML='';data.forEach(addBub);scrollEnd()}
+async function groupChat(gid){tab='msg';
+ const {data:mem}=await sb.from('group_members').select('role,profiles!group_members_user_id_fkey(id,username,full_name,avatar_url,verified,badge_visible,last_seen)').eq('group_id',gid);
+ const mine=(mem||[]).find(m=>m.profiles.id==me.id);if(!mine){toast('You are not a member of this group');return msg()}
+ let g=GR[gid];if(!g||g.owner_id===undefined){g=(await sb.from('groups').select('*').eq('id',gid).single()).data;if(!g)return msg();GR[gid]=g}
+ mem.forEach(m=>reg(m.profiles));CH={k:'g',g,role:mine.role};chatWith={id:'g'+gid};app.style.paddingBottom='0';
+ app.innerHTML=`<div class="top"><div style="display:flex;align-items:center;gap:10px;min-width:0"><button class="ib" onclick="go('msg')">${ic('back')}</button><div style="display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0" onclick="groupInfo('${gid}')"><div class="gi" style="width:42px;height:42px;border-radius:50%">${gLetter(g)}</div><div style="min-width:0"><div class="nm">${e(g.name)}</div><div class="mu">${mem.length} members · tap for group info</div></div></div></div></div>
+ <div id="cm" class="pad" style="min-height:70vh"></div>${chatBar()}`;
+ const {data}=await sb.from('group_messages').select('*').eq('group_id',gid).order('created_at',{ascending:false}).limit(300);
+ $('#cm').innerHTML='';(data||[]).reverse().filter(m=>!hid(m.sender_id)).forEach(addBub);scrollEnd()}
+function addBub(m){const c0=$('#cm');if(!c0)return;const mine=m.sender_id==me.id,g=CH&&CH.k=='g';let c=lk(m.body||'');
+ if(m.media_type=='image')c=`<img src="${e(m.media_url)}">`;else if(m.media_type=='video')c=`<video src="${e(m.media_url)}" controls playsinline></video>`;else if(m.media_type=='audio')c=`<audio src="${e(m.media_url)}" controls></audio>`;
+ else if(m.media_type=='file')c=`<div class="filec" data-u="${e(m.media_url)}" data-n="${e(m.body)}" onclick="dl(this.dataset.u,this.dataset.n)">${ic('dl',20)}<span>${e(m.body)}</span></div>`;
+ if(m.media_type=='image'||m.media_type=='video')c+=`<div><button class="dlb" onclick="dl('${e(m.media_url)}')">${ic('dl',15)}Save</button></div>`;
+ const sp=PM[m.sender_id],who=g&&!mine?`<div style="font-weight:800;font-size:12.5px;margin-bottom:2px;display:flex;align-items:center">${nm(sp||{username:'Member'})}${vb(sp,13)}</div>`:'';
+ const can=g&&(mine||CH.role!='member');
+ c0.insertAdjacentHTML('beforeend',`<div class="bub ${mine?'me':'th'}" id="gm${m.id}" ${can?`oncontextmenu="msgMenu(${m.id});return false"`:''}>${who}${c}<div style="opacity:.6;font-size:10px;margin-top:2px">${ago(m.created_at)}</div></div>`)}
+function msgMenu(id){sheet(`<div class="sw" style="cursor:pointer;padding:14px 4px;color:#e0245e" onclick="closeSheet();delGM(${id})">${ic('trash',22)}<span style="flex:1;margin-left:12px">Delete message</span></div>`)}
+async function delGM(id){const {error}=await sb.from('group_messages').delete().eq('id',id);if(error)return toast(error.message);$('#gm'+id)?.remove()}
+const scrollEnd=()=>scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+async function sendRaw(o){if(!CH)return;let r;
+ if(CH.k=='g')r=await sb.from('group_messages').insert({group_id:CH.g.id,sender_id:me.id,...o}).select().single();
+ else r=await sb.from('messages').insert({sender_id:me.id,receiver_id:CH.p.id,...o}).select().single();
+ if(r.error)return toast(r.error.code=='42501'?"You can't send messages here":r.error.message);addBub(r.data);scrollEnd()}
+function sendT(){const b=$('#mi').value.trim();if(!b)return;$('#mi').value='';$('#mi').style.height='auto';sendRaw({body:b})}
+function attachMenu(){sheet(`<div class="sw" style="cursor:pointer;padding:14px 4px" onclick="closeSheet();sendMedia('image/*,video/*')">${ic('img',22)}<span style="flex:1;margin-left:12px">Photo or video</span></div><div class="sw" style="cursor:pointer;padding:14px 4px" onclick="closeSheet();sendMedia('*/*')">${ic('dl',22)}<span style="flex:1;margin-left:12px">File or document</span></div>`)}
+async function sendMedia(acc){const f=await pick(acc);if(!f)return;toast('Sending…');const u=await upload(f);if(!u)return;
+ const t=f.type.startsWith('image')?'image':f.type.startsWith('video')?'video':f.type.startsWith('audio')?'audio':'file';sendRaw({media_url:u,media_type:t,body:t=='file'?f.name:null})}
+// voice: record -> preview -> send
+let mr,chunks=[],vD=null,vT;
+async function rec(){const b=$('#mic');
+ if(mr&&mr.state=='recording'){mr.stop();return}
+ try{const stm=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  const mt=['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t));
+  mr=new MediaRecorder(stm,mt?{mimeType:mt,audioBitsPerSecond:128000}:undefined);chunks=[];vDiscard();
+  mr.ondataavailable=x=>x.data.size&&chunks.push(x.data);
+  mr.onstop=()=>{clearInterval(vT);stm.getTracks().forEach(t=>t.stop());b.innerHTML=ic('mic',24);b.style.color='';const type=mr.mimeType||'audio/webm',bl=new Blob(chunks,{type});vD={bl,type,ext:type.includes('mp4')?'m4a':'webm'};vPrev(URL.createObjectURL(bl))};
+  mr.start();b.innerHTML=ic('stop',24);b.style.color='#ff2e7e';let s=0;const vp=$('#vp');vp.style.display='flex';
+  const tick=()=>vp.innerHTML=`<span style="color:#ff2e7e;font-weight:700">Recording ${~~(s/60)}:${String(s%60).padStart(2,'0')} · tap stop when done</span>`;tick();vT=setInterval(()=>{s++;tick()},1000)}catch{toast('Please allow microphone access')}}
+function vPrev(u){const vp=$('#vp');if(!vp)return;vp.style.display='flex';vp.innerHTML=`<audio src="${u}" controls style="flex:1;min-width:0;height:40px"></audio><button class="g" style="padding:9px 12px" onclick="vDiscard()">Delete</button><button style="padding:9px 14px" onclick="vSend()">Send</button>`}
+function vDiscard(){vD=null;const vp=$('#vp');if(vp){vp.style.display='none';vp.innerHTML=''}}
+async function vSend(){if(!vD)return;const d=vD;vDiscard();toast('Sending voice…');const u=await upload(new File([d.bl],'voice.'+d.ext,{type:d.type}));u&&sendRaw({media_url:u,media_type:'audio'})}
+
+// ---------- NOTIFICATIONS ----------
+async function notif(){unread=0;shell('Activity','<div id="nl"></div>');
+ const {data}=await sb.from('notifications').select('*,profiles:actor_id(username,full_name,avatar_url,verified,badge_visible)').order('created_at',{ascending:false}).limit(50);
+ $('#nl').innerHTML=(data||[]).filter(n=>!hid(n.actor_id)).map(n=>(NM[n.id]=n,`<div class="row" onclick="openNotif(NM[${n.id}])">${av(n.profiles)}<div><span class="nm" style="display:inline-flex">${nm(n.profiles)}${vb(n.profiles,14)}</span> ${e(n.text)}<div class="mu">${ago(n.created_at)}</div></div></div>`)).join('')||`<div class="empty">${ic('bell',50)}<b>No notifications yet</b></div>`}
+async function openNotif(n){if(n.type=='message'){const {data}=await sb.from('profiles').select('*').eq('id',n.actor_id).single();if(data){tab='msg';chat(reg(data))}}else if(n.post_id)openPost(n.post_id,n.type=='comment'||n.type=='reply')}
+async function openPost(id,withC,from='notif'){tab='';const {data}=await sb.from('posts').select(PQ).eq('id',id).single();
+ shell('Post',data?postHTML(data):'<p class="empty">This post is no longer available</p>',`<button class="ib" onclick="${from=='notif'?"go('notif')":`openP('${from}')`}">${ic('back',20)}</button>`);if(data&&withC)comments(id)}
+let INV=null;
+function subscribe(){chan.forEach(c=>sb.removeChannel(c));
+ chan=[sb.channel('n'+me.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+me.id},async x=>{
+   const n=x.new;if(hid(n.actor_id))return;const a=(await sb.from('profiles').select('username,full_name').eq('id',n.actor_id).single()).data;
+   if(n.type=='message'&&chatWith&&chatWith.id==n.actor_id)return;
+   toast(`${(a?.full_name||a?.username||'Someone')} ${n.text}`,()=>openNotif(n));if(tab=='notif')notif();else{unread++;updDot()}}).subscribe(),
+  sb.channel('m'+me.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'receiver_id=eq.'+me.id},x=>{if(chatWith&&chatWith.id==x.new.sender_id){addBub(x.new);scrollEnd()}}).subscribe(),
+  sb.channel('p').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'},()=>{if(tab=='feed')toast('New post available — refresh your feed')}).subscribe(),
+  sb.channel('pr').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles'},x=>{if(PM[x.new.id]){Object.assign(PM[x.new.id],x.new);refSt()}}).subscribe(),
+  sb.channel('gm').on('postgres_changes',{event:'INSERT',schema:'public',table:'group_messages'},async x=>{const m=x.new;if(m.sender_id==me.id||hid(m.sender_id))return;
+   if(CH&&CH.k=='g'&&CH.g.id==m.group_id){if(!PM[m.sender_id]){const {data}=await sb.from('profiles').select('*').eq('id',m.sender_id).single();if(data)reg(data)}addBub(m);scrollEnd()}
+   else{const g=GR[m.group_id],p=PM[m.sender_id];toast(`${g?g.name:'Group'}: ${p?nmr(p):'Someone'}: ${m.media_type=='audio'?'sent a voice message':m.media_url?'sent a '+m.media_type:(m.body||'')}`,()=>groupChat(m.group_id))}}).subscribe(),
+  sb.channel('gr').on('postgres_changes',{event:'INSERT',schema:'public',table:'group_requests'},async x=>{const p=(await sb.from('profiles').select('*').eq('id',x.new.user_id).single()).data;const g=GR[x.new.group_id];toast(`${p?nmr(p):'Someone'} wants to join ${g?g.name:'your group'}`,()=>groupInfo(x.new.group_id),6000)}).subscribe(),
+  sb.channel('gj').on('postgres_changes',{event:'INSERT',schema:'public',table:'group_members',filter:'user_id=eq.'+me.id},async x=>{const g=(await sb.from('groups').select('*').eq('id',x.new.group_id).single()).data;if(g&&g.owner_id!=me.id){GR[g.id]=g;toast('You were added to '+g.name,()=>groupChat(g.id),6000)}}).subscribe(),
+  sb.channel('inv:'+me.id).on('broadcast',{event:'invite'},({payload})=>{if(hid(payload.from)||!GM[payload.game])return;INV=payload;
+   sheet(`<b style="font-size:18px">Game invite</b><p style="margin:8px 0 14px"><b>${e(payload.n)}</b> invited you to play ${GM[payload.game].n}</p><button style="width:100%" onclick="acceptInv()">Join game</button><button class="g" style="width:100%;margin-top:8px" onclick="closeSheet()">Not now</button>`)}).subscribe()]}
+
+// ---------- PROFILE ----------
+async function profile(uid){const own=uid==me.id;
+ const [{data:p},{data:ps}]=await Promise.all([sb.from('profiles').select('*').eq('id',uid).single(),sb.from('posts').select('*').eq('user_id',uid).order('created_at',{ascending:false})]);
+ reg(p);window.PS=ps;const bl=BL.has(uid);
+ shell('Profile',`<div class="pcard"><span class="ring" style="display:inline-block">${av(p,'big')}</span>
+ <div class="nm" style="justify-content:center;font-size:23px;margin-top:12px">${nm(p)}${vb(p,20)}</div><div class="mu" style="font-size:14px;margin-top:1px">@${e(p.username)}</div>
+ <div class="mu" style="margin-top:6px">${st(p)}</div>
+ ${p.bio?`<p style="margin:14px 0 0;white-space:pre-wrap;word-break:break-word">${lk(p.bio)}</p>`:''}
+ <div class="stats"><div><b>${ps.length}</b><span class="mu">Posts</span></div><div><b>${ps[0]?ago(ps[0].created_at):'—'}</b><span class="mu">Last post</span></div></div>
+ ${own?`<button class="g" style="width:100%" onclick="editP()">Edit profile</button>`:bl?`<button class="g" style="width:100%" onclick="unblock('${p.id}')">Unblock</button>`:`<div style="display:flex;gap:8px"><button style="flex:1" onclick="chat('${p.id}')">Message</button><button class="ib" style="height:auto;width:50px" onclick="profMenu('${p.id}')">${ic('more',22,'currentColor')}</button></div>`}</div>
+ <div class="sec">${ic('grid',18)}Posts</div>
+ ${ps.length?`<div class="grid">${ps.map((x,i)=>`<div onclick="openPost(${x.id},false,'${uid}')">${!x.media_url?`<div class="tt2">${e((x.caption||'').slice(0,90))}</div>`:x.media_type=='video'?`<video src="${e(x.media_url)}#t=0.1" muted playsinline></video>`:`<img src="${e(x.media_url)}" loading="lazy">`}</div>`).join('')}</div>`:`<div class="empty">${ic('cam',44)}<b>No posts yet</b></div>`}`,own?`<button class="ib" onclick="go('settings')">${ic('sl',20)}</button>`:'')}
+function viewM(i){const x=PS[i];sheet(`${x.media_type=='video'?`<video class="media" style="border-radius:16px" src="${e(x.media_url)}" controls playsinline></video>`:`<img class="media" style="border-radius:16px" src="${e(x.media_url)}">`}<p style="margin-top:10px;white-space:pre-wrap">${lk(x.caption)}</p><p class="mu">${new Date(x.created_at).toLocaleString()}</p><button class="g" style="width:100%;margin-top:10px;display:flex;justify-content:center;gap:8px" onclick="dl('${e(x.media_url)}')">${ic('dl',20)}Download original</button>`)}
+function editP(){tab='me';shell('Edit profile',`<div class="pad"><div style="text-align:center;margin:6px 0 14px"><span class="ring" style="display:inline-block">${av(prof,'big').replace('class="av big"','class="av big" id="eav"')}</span><br><button class="g" style="margin-top:12px" onclick="chAv()">Change photo</button></div>
+ <label class="mu">Nickname</label><input id="en" value="${e(prof.full_name)}"><label class="mu">Username</label><input id="eu" value="${e(prof.username)}" autocapitalize="none"><label class="mu">Bio</label><textarea id="eb" rows="3">${e(prof.bio)}</textarea>
+ <div class="grp" style="margin:12px 0"><div class="sw"><span style="display:flex;align-items:center">Get verified ${prof.verified?bd(16):''}</span>${prof.verified?'<span class="mu">Verified</span>':'<button class="g" onclick="verify()">Enter code</button>'}</div>${prof.verified?`<div class="sw"><span>Show blue badge</span><button class="tg ${prof.badge_visible!==false?'on':''}" onclick="togBadge(this)"></button></div>`:''}</div>
+ <button style="width:100%;padding:14px" onclick="saveP()">Save changes</button><button class="g" style="width:100%;margin-top:8px" onclick="go('me')">Cancel</button></div>`)}
+function cropImage(file){return new Promise(res=>{
+ const url=URL.createObjectURL(file),img=new Image();
+ img.onload=()=>{const S=Math.min(innerWidth-48,360),o=document.createElement('div');o.className='crop';
+  o.innerHTML=`<div class="cr-t">Move and zoom</div><div class="cr-s" style="width:${S}px;height:${S}px"><img class="cr-i" draggable="false"><div class="cr-m"></div></div><input type="range" class="cr-z" min="1" max="4" step="0.01" value="1"><div class="cr-b"><button class="g" id="crc">Cancel</button><button id="crd">Done</button></div>`;
+  document.body.appendChild(o);
+  const im=o.querySelector('.cr-i'),st=o.querySelector('.cr-s'),zr=o.querySelector('.cr-z');im.src=url;
+  const w=img.naturalWidth,h=img.naturalHeight,base=Math.max(S/w,S/h);let z=1,cx=S/2,cy=S/2;
+  const draw=()=>{const sc=base*z,iw=w*sc,ih=h*sc;cx=Math.min(S/2+(iw-S)/2,Math.max(S/2-(iw-S)/2,cx));cy=Math.min(S/2+(ih-S)/2,Math.max(S/2-(ih-S)/2,cy));im.style.width=iw+'px';im.style.height=ih+'px';im.style.left=(cx-iw/2)+'px';im.style.top=(cy-ih/2)+'px'};
+  draw();const P=new Map();let d0=1,z0=1;
+  st.onpointerdown=ev=>{st.setPointerCapture(ev.pointerId);P.set(ev.pointerId,{x:ev.clientX,y:ev.clientY});if(P.size==2){const [a,b]=[...P.values()];d0=Math.hypot(a.x-b.x,a.y-b.y)||1;z0=z}};
+  st.onpointermove=ev=>{const p=P.get(ev.pointerId);if(!p)return;if(P.size==1){cx+=ev.clientX-p.x;cy+=ev.clientY-p.y;p.x=ev.clientX;p.y=ev.clientY}else{p.x=ev.clientX;p.y=ev.clientY;const [a,b]=[...P.values()];z=Math.min(4,Math.max(1,z0*Math.hypot(a.x-b.x,a.y-b.y)/d0));zr.value=z}draw()};
+  st.onpointerup=st.onpointercancel=ev=>P.delete(ev.pointerId);
+  st.onwheel=ev=>{ev.preventDefault();z=Math.min(4,Math.max(1,z*(ev.deltaY<0?1.08:.93)));zr.value=z;draw()};
+  zr.oninput=()=>{z=+zr.value;draw()};
+  const done=v=>{o.remove();URL.revokeObjectURL(url);res(v)};
+  o.querySelector('#crc').onclick=()=>done(null);
+  o.querySelector('#crd').onclick=()=>{const sc=base*z,iw=w*sc,ih=h*sc,left=cx-iw/2,top=cy-ih/2,c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,512,512);g.drawImage(img,-left/sc,-top/sc,S/sc,S/sc,0,0,512,512);c.toBlob(b=>done(new File([b],'avatar.jpg',{type:'image/jpeg'})),'image/jpeg',.92)}};
+ img.onerror=()=>{URL.revokeObjectURL(url);res(file)};img.src=url})}
+async function chAv(){const f=await pick('image/*');if(!f)return;const c=await cropImage(f);if(!c)return;toast('Uploading…');const u=await upload(c);if(u){prof.avatar_url=u;$('#eav').src=u;toast('Photo ready. Tap Save changes.')}}
+async function saveP(){const {error}=await sb.from('profiles').update({username:$('#eu').value.trim().toLowerCase().replace(/\W/g,''),full_name:$('#en').value.trim(),bio:$('#eb').value,avatar_url:prof.avatar_url}).eq('id',me.id);
+ if(error)return toast(error.message);await loadProf();go('me')}
+async function togBadge(b){const on=!b.classList.contains('on');const {error}=await sb.from('profiles').update({badge_visible:on}).eq('id',me.id);if(error)return toast(error.message);b.classList.toggle('on',on);prof.badge_visible=on;PM[me.id]=prof;toast(on?'Verified badge is visible':'Verified badge is hidden')}
+function verify(){ask('Verification code','Enter code','text',async c=>{if(!c.trim())return;const {data,error}=await sb.rpc('verify_me',{code:c.trim()});
+ if(error)return toast('Error: '+error.message);if(data){toast('You are now verified');await loadProf();editP()}else toast('Incorrect code. Please try again')})}
+
+// ---------- SETTINGS ----------
+function settings(){tab='me';const d=document.documentElement.dataset.theme=='dark';
+ shell('Settings',`<div class="grp"><div class="sw"><span style="display:flex;gap:12px;align-items:center">${ic('moon')}Dark mode</span><button class="tg ${d?'on':''}" onclick="dark(this)"></button></div>
+ <div class="sw"><span style="display:flex;gap:12px;align-items:center">${ic('bell')}Push notifications</span><button class="g" onclick="Notification.requestPermission().then(r=>toast('Notifications: '+r))">Allow</button></div></div>
+ <div class="grp"><div class="sw"><span class="mu" style="font-size:14px">${e(me.email)}</span></div>
+ <div class="sw"><span style="display:flex;gap:12px;align-items:center">${ic('lock')}Password</span><button class="g" onclick="pw()">Change</button></div>
+ <div class="sw"><span style="display:flex;gap:12px;align-items:center">${ic('ban')}Blocked accounts</span><button class="g" onclick="blockedList()">View</button></div></div>
+ <div class="grp"><div class="sw" onclick="out()" style="cursor:pointer;color:#e0245e;font-weight:700"><span style="display:flex;gap:12px;align-items:center">${ic('out')}Log out</span></div></div>
+ <div style="padding:0 12px"><button class="g" style="width:100%" onclick="go('me')">Back to profile</button></div>`)}
+function dark(b){const on=!b.classList.contains('on');b.classList.toggle('on',on);const t=on?'dark':'light';document.documentElement.dataset.theme=t;LS.setItem('th',t)}
+function pw(){ask('New password','Min 6 characters','password',async p=>{if(!p)return;const {error}=await sb.auth.updateUser({password:p});toast(error?error.message:'Password changed')})}
+function out(){sb.auth.signOut().then(()=>{chan.forEach(c=>sb.removeChannel(c));authView()})}
+
+// ---------- GAMES (live, 2 players) ----------
+const GM={ttt:{n:'Tic Tac Toe',d:'3 in a row wins'},rps:{n:'Rock Paper Scissors',d:'First to 3 round wins'},tap:{n:'Tap Battle',d:'First to 30 taps wins'}};
+let G=null;
+function gamesPage(){shell('Games',`<div class="pad"><p class="mu" style="margin-bottom:12px">Play live with a friend. Both players must be online.</p></div>
+ ${Object.entries(GM).map(([k,g])=>`<div class="row" onclick="newRoom('${k}')"><div class="gi">${ic('game',24)}</div><div><div class="nm">${g.n}</div><div class="mu">${g.d}</div></div></div>`).join('')}
+ <div class="grp" style="padding:14px 16px"><b>Join with a room code</b><div style="display:flex;gap:8px;margin-top:6px"><input id="jc" inputmode="numeric" maxlength="4" placeholder="4-digit code" style="margin:0"><button onclick="joinCode()">Join</button></div></div>`)}
+function newRoom(gid){enterRoom(gid,String(Math.floor(1000+Math.random()*9000)),'host')}
+function joinCode(){const c=($('#jc').value||'').trim();if(c.length!=4)return toast('Enter the 4-digit code');enterRoom(null,c,'guest')}
+function acceptInv(){closeSheet();tab='games';enterRoom(INV.game,INV.code,'guest')}
+const gUser=()=>({id:me.id,n:nmr(prof)});
+const gsend=o=>G&&G.ch.send({type:'broadcast',event:'m',payload:o});
+function enterRoom(gid,code,role){if(G)leaveRoom();G={game:gid||'ttt',code,role,opp:null,s:null,mk:role=='host'?'X':'O'};
+ G.ch=sb.channel('room:'+code,{config:{broadcast:{self:false}}});
+ G.ch.on('broadcast',{event:'m'},({payload})=>gmsg(payload)).subscribe(s=>{if(s=='SUBSCRIBED'&&role=='guest')gsend({t:'join',u:gUser()})});
+ renderGame()}
+function leaveRoom(){if(!G)return;try{gsend({t:'bye'})}catch{}sb.removeChannel(G.ch);G=null}
+function gmsg(p){if(!G)return;
+ if(p.t=='join'&&G.role=='host'){G.opp=p.u;G.s=null;initGame();gsend({t:'start',game:G.game,u:gUser()});toast(p.u.n+' joined');renderGame()}
+ else if(p.t=='start'){G.game=p.game;G.opp=p.u;G.s=null;initGame();renderGame()}
+ else if(p.t=='bye'){G.opp=null;toast('Opponent left');renderGame()}
+ else if(p.t=='again'){G.s=null;initGame();drawGame()}
+ else if(!G.s)return;
+ else if(p.t=='move'){applyT(p.i,G.mk=='X'?'O':'X');drawGame()}
+ else if(p.t=='pick'){G.s.o=p.c;checkR();drawGame()}
+ else if(p.t=='next'){G.s.m='';G.s.o='';G.s.done=0;drawGame()}
+ else if(p.t=='tap'){G.s.o=p.n;if(p.n>=30&&!G.s.w)G.s.w='o';G.s.w?drawGame():tapBars()}}
+function initGame(){const g=G.game;G.s=g=='ttt'?{b:Array(9).fill(''),t:'X',w:''}:g=='rps'?{m:'',o:'',sc:[0,0],done:0}:{m:0,o:0,w:''}}
+function again(){G.s=null;initGame();gsend({t:'again'});drawGame()}
+function renderGame(){const g=GM[G.game];let b;
+ if(!G.opp)b=G.role=='host'?`<div class="pad" style="text-align:center"><p class="mu">Waiting for a friend to join…</p><div class="code">${G.code}</div><p class="mu">Share this code, or invite someone below</p><input id="gs" placeholder="Search a friend to invite" oninput="gsrch(this.value)" autocomplete="off" style="margin-top:14px"><div id="gl" style="text-align:left"></div></div>`
+  :`<div class="pad" style="text-align:center"><p class="mu" style="margin-top:30px">Joining room ${G.code}…</p><p class="mu">If nothing happens, the host may have left.</p></div>`;
+ else b=`<div class="pad"><div class="mu" style="text-align:center;margin-bottom:12px">You vs <b style="color:var(--tx)">${e(G.opp.n)}</b></div><div id="gb"></div></div>`;
+ shell(g.n,b,`<button class="ib" onclick="go('games')">${ic('back',20)}</button>`);
+ if(G.opp)drawGame();else if(G.role=='host')gsrch('')}
+async function gsrch(q){q=q.trim().replace(/[%,()]/g,'');let r=sb.from('profiles').select('*').neq('id',me.id).limit(20);if(q)r=r.or(`username.ilike.%${q}%,full_name.ilike.%${q}%`);const {data}=await r;const gl=$('#gl');if(!gl)return;
+ gl.innerHTML=(data||[]).filter(p=>!hid(p.id)).map(p=>`<div style="display:flex;align-items:center;gap:12px;padding:8px 0">${av(p)}<div style="flex:1"><div class="nm">${nm(p)}${vb(p)}</div><div class="mu">${st(p)}</div></div><button onclick="invite('${reg(p)}')" style="padding:8px 14px">Invite</button></div>`).join('')}
+function invite(uid){const c=sb.channel('inv:'+uid);c.subscribe(s=>{if(s=='SUBSCRIBED'){c.send({type:'broadcast',event:'invite',payload:{n:nmr(prof),game:G.game,code:G.code,from:me.id}});setTimeout(()=>sb.removeChannel(c),1500);toast('Invite sent. They need to be online.')}})}
+const LN=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+function applyT(i,m){const s=G.s;if(s.w||s.b[i])return;s.b[i]=m;if(LN.some(l=>l.every(k=>s.b[k]==m)))s.w=m;else if(s.b.every(x=>x))s.w='D';s.t=m=='X'?'O':'X'}
+function tmove(i){if(!G||!G.s||G.s.w||G.s.b[i]||G.s.t!=G.mk)return;applyT(i,G.mk);gsend({t:'move',i});drawGame()}
+function rpick(c){if(!G.s||G.s.m)return;G.s.m=c;gsend({t:'pick',c});checkR();drawGame()}
+function checkR(){const s=G.s;if(!s.m||!s.o||s.done)return;s.done=1;const W={R:'S',S:'P',P:'R'};if(s.m==s.o)s.res='Draw';else if(W[s.m]==s.o){s.res='You win this round';s.sc[0]++}else{s.res='You lose this round';s.sc[1]++}}
+function rnext(){G.s.m='';G.s.o='';G.s.done=0;gsend({t:'next'});drawGame()}
+function tapGo(){const s=G.s;if(s.w)return;s.m++;gsend({t:'tap',n:s.m});if(s.m>=30){s.w='m';drawGame()}else tapBars()}
+function tapBars(){const s=G.s,a=$('#bm'),b=$('#bo');if(a)a.style.width=s.m/30*100+'%';if(b)b.style.width=s.o/30*100+'%';const c=$('#tc');if(c)c.textContent=s.m+' / 30'}
+function drawGame(){const el=$('#gb');if(!el||!G||!G.s)return;const s=G.s;
+ if(G.game=='ttt'){const my=G.mk,msg=s.w=='D'?'Draw':s.w?(s.w==my?'You win!':'You lose'):(s.t==my?'Your turn ('+my+')':"Opponent's turn");
+  el.innerHTML=`<div style="text-align:center;font-weight:800;font-size:18px;margin-bottom:14px">${msg}</div><div class="tt">${s.b.map((c,i)=>`<button class="${c}" onclick="tmove(${i})">${c}</button>`).join('')}</div>${s.w?`<button style="width:100%;margin-top:16px" onclick="again()">Play again</button>`:''}`}
+ else if(G.game=='rps'){const E={R:'✊',P:'✋',S:'✌️'},over=s.sc[0]>=3||s.sc[1]>=3;
+  el.innerHTML=`<div style="text-align:center;font-weight:800;font-size:18px;margin-bottom:6px">You ${s.sc[0]} : ${s.sc[1]} ${e(G.opp.n)}</div>
+  ${s.done?`<div style="text-align:center;font-size:44px;margin:14px 0">${E[s.m]} vs ${E[s.o]}</div><div style="text-align:center;font-weight:700">${over?(s.sc[0]>=3?'You won the match!':'You lost the match'):s.res}</div>${over?`<button style="width:100%;margin-top:16px" onclick="again()">Play again</button>`:`<button style="width:100%;margin-top:16px" onclick="rnext()">Next round</button>`}`
+  :`<p class="mu" style="text-align:center;margin:10px 0 16px">${s.m?'Waiting for opponent…':'Pick one'}</p><div class="rps">${['R','P','S'].map(c=>`<button onclick="rpick('${c}')" style="${s.m==c?'outline:3px solid #ff2e7e':''}">${E[c]}</button>`).join('')}</div>`}`}
+ else{el.innerHTML=`<div style="text-align:center;font-weight:800;font-size:18px">${s.w?(s.w=='m'?'You win!':'You lose'):'Tap as fast as you can!'}</div>
+  <div class="mu" style="margin-top:12px">You <span id="tc">${s.m} / 30</span></div><div class="bar"><i id="bm" style="width:${s.m/30*100}%"></i></div><div class="mu">${e(G.opp.n)}</div><div class="bar"><i id="bo" style="width:${s.o/30*100}%"></i></div>
+  ${s.w?`<button style="width:100%;margin-top:6px" onclick="again()">Play again</button>`:`<button class="tapbtn" onpointerdown="tapGo()">TAP</button>`}`}}
+
+let ly=0;addEventListener('scroll',()=>{const t=$('.top'),y=scrollY;if(t&&!chatWith){if(y>ly+8&&y>70)t.classList.add('hide');else if(y<ly-8||y<70)t.classList.remove('hide')}ly=y},{passive:true});
+if(SB_URL.startsWith('YOUR'))app.innerHTML='<div class="auth"><div class="brand" style="font-size:40px;justify-content:center">Open<b>Tap</b></div><p style="margin-top:24px">Add your <b>SB_URL</b> and <b>SB_KEY</b> at the top of this file.</p></div>';else boot();
+</script></body></html>
